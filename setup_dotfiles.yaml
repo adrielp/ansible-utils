@@ -1,0 +1,73 @@
+---
+- name: Install and configure dotfiles
+  hosts: localhost
+  gather_facts: yes
+
+  tasks:
+    - name: Checkout dotfiles to local directory
+      ansible.builtin.git:
+        repo: 'https://github.com/adrielp/dotfiles.git'
+        dest: '~/adrielp-dotfiles'
+        version: master
+
+    - name: Check if .tmux.conf exists
+      ansible.builtin.stat:
+        path: ~/.tmux.conf
+      register: stat_tmux_conf
+
+    - name: Backup old .tmux.conf if exists
+      ansible.builtin.shell: |
+        mv ~/.tmux.conf ~/bak.ap.tmux.conf
+      when: stat_tmux_conf.stat.exists
+
+    - name: Copy .tmux.conf from repo to home
+      ansible.builtin.shell: |
+        cp ~/adrielp-dotfiles/.tmux.conf ~/.tmux.conf
+
+    - name: Check if ZSH is installed in /usr/local/bin
+      ansible.builtin.stat:
+        path: /usr/local/bin/zsh
+      register: stat_zsh
+
+    - name: Backup old .zshrc if exists
+      ansible.builtin.shell: |
+        mv ~/.zshrc ~/bak.ap.zshrc
+      when: stat_zsh.stat.exists
+
+    - name: Copy .zshrc into home directory if ZSH exists
+      ansible.builtin.shell: |
+        cp ~/adrielp-dotfiles/.zshrc ~/.zshrc
+      when: stat_zsh.stat.exists
+
+    - name: Check if init.vim exists
+      ansible.builtin.stat:
+        path: ~/.config/nvim/init.vim
+      register: stat_init_vim
+
+    - name: Backup old init.vim if exists
+      ansible.builtin.shell: |
+        mv ~/.config/nvim/init.vim \
+          ~/.config/nvim/bak.ap.init.vim
+      when: stat_init_vim.stat.exists
+
+    - name: Copy init.vim to .config/nvim/init.vim
+      ansible.builtin.shell: |
+        cp ~/adrielp-dotfiles/.config/nvim/init.vim \
+          ~/.config/nvim/init.vim
+
+        #- name: Check if .tmux.confg exists
+        #  ansible.builtin.shell: 'whoami'
+        #  when: ansible_distribution == 'MacOSX'
+
+        #- name: Check os family
+        #  debug: msg="{{ ansible_os_family }}"
+
+        #- assert: { that: "ansible_os_family == 'Darwin'" }
+
+
+        #- name: Get facts
+        #  debug: msg="{{ ansible_distribution }}"
+
+        #- name: Check if .tmux.conf exists
+        #  when: ansible_os_family == 'MacOSX'
+        #  ansible.builtin.shell: "echo 'SOmething'"
