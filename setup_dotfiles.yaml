@@ -54,20 +54,3 @@
       ansible.builtin.shell: |
         cp ~/adrielp-dotfiles/.config/nvim/init.vim \
           ~/.config/nvim/init.vim
-
-        #- name: Check if .tmux.confg exists
-        #  ansible.builtin.shell: 'whoami'
-        #  when: ansible_distribution == 'MacOSX'
-
-        #- name: Check os family
-        #  debug: msg="{{ ansible_os_family }}"
-
-        #- assert: { that: "ansible_os_family == 'Darwin'" }
-
-
-        #- name: Get facts
-        #  debug: msg="{{ ansible_distribution }}"
-
-        #- name: Check if .tmux.conf exists
-        #  when: ansible_os_family == 'MacOSX'
-        #  ansible.builtin.shell: "echo 'SOmething'"
