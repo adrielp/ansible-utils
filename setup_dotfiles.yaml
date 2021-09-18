@@ -10,6 +10,11 @@
         dest: '~/adrielp-dotfiles'
         version: master
 
+    - name: Ensure config and autoload exist
+      ansible.builtin.file:
+        path: ~/.config/nvim/autoload
+        state: directory
+
     - name: Check if .tmux.conf exists
       ansible.builtin.stat:
         path: ~/.tmux.conf
