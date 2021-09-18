@@ -34,15 +34,21 @@
         path: /usr/local/bin/zsh
       register: stat_zsh
 
+    - name: Check if .zshrc exists if ZSH installed
+      ansible.builtin.stat:
+        path: ~/.zshrc
+      register: stat_zshrc
+      #when: stat_zsh.stat.exists
+
     - name: Backup old .zshrc if exists
       ansible.builtin.shell: |
         mv ~/.zshrc ~/bak.ap.zshrc
-      when: stat_zsh.stat.exists
+      when: stat_zshrc.stat.exists
 
     - name: Copy .zshrc into home directory if ZSH exists
       ansible.builtin.shell: |
         cp ~/adrielp-dotfiles/.zshrc ~/.zshrc
-      when: stat_zsh.stat.exists
+      when: stat_zshrc.stat.exists
 
     - name: Check if init.vim exists
       ansible.builtin.stat:
@@ -59,3 +65,16 @@
       ansible.builtin.shell: |
         cp ~/adrielp-dotfiles/.config/nvim/init.vim \
           ~/.config/nvim/init.vim
+
+    - name: Install Powerlevel 10k
+      ansible.builtin.shell: |
+        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
+          ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+      ignore_errors: true
+
+    - name: Install Autosuggestions
+      ansible.builtin.shell: |
+        git clone https://github.com/zsh-users/zsh-autosuggestions \
+          ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+      ignore_errors: true
+
